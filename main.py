@@ -1,64 +1,46 @@
 import praw
 from prawcore.exceptions import ResponseException
 import dotenv
+import time
+import datetime
 
+# Initialize the Reddit client
 reddit = praw.Reddit(
-        client_id=dotenv.get_key('.env', 'CLIENT_ID'), 
-        client_secret=dotenv.get_key('.env', 'CLIENT_SECRET'),
-        username=dotenv.get_key('.env', 'USERNAME'),
-        password=dotenv.get_key('.env', 'PASSWORD'),
-        user_agent=dotenv.get_key('.env', 'USER_AGENT')
-    )
+    client_id=dotenv.get_key('.env', 'CLIENT_ID'),
+    client_secret=dotenv.get_key('.env', 'CLIENT_SECRET'),
+    user_agent=dotenv.get_key('.env', 'USER_AGENT')
+)
 
-def search_reddit(keyword, subreddit="all", limit=10):
+def search_keyword_in_comments_of_latest_posts(keyword, subreddit_name='all', limit=10):
     """
-    Search for posts with a specific keyword on Reddit.
+    Searches for a given keyword in the comments of the latest posts in reddit.
 
     :param keyword: The keyword to search for.
-    :param subreddit: The subreddit to search in (default: all).
-    :param limit: Number of posts to retrieve.
-    :return: A list of posts with title, URL, and subreddit.
+    :param limit: How many of the latest submissions to analyze (default=10).
+    :return: A list of comments that contain the keyword.
     """
-    results = []
-    for submission in reddit.subreddit(subreddit).search(keyword, limit=limit):
-        results.append({
-            "title": submission.title,
-            "url": submission.url,
-            "subreddit": submission.subreddit.display_name,
-            "created_utc": submission.created_utc
-        })
-    return results
+    comments_with_keyword = []
+    for comment in reddit.subreddit(subreddit_name).comments(limit=limit):
+        if keyword in comment.body:
+            comments_with_keyword.append(comment)
+    return comments_with_keyword
 
-# Step 3: Fetch recent posts
-keyword = "machine learning"  # Replace with your keyword
-posts = search_reddit(keyword, limit=5)
-
-# Step 4: Display results
-for post in posts:
-    print(f"Title: {post['title']}")
-    print(f"URL: {post['url']}")
-    print(f"Subreddit: {post['subreddit']}")
-    print(f"Posted on: {post['created_utc']}")
-    print("-" * 50)
+if __name__ == "__main__":
+    start = time.time()
     
-# try:
-#     reddit = praw.Reddit(
-#         client_id='NNTlbq_GJlrUXwOCw5TC2Q',
-#         client_secret='vNcIczNFXXpIe0G2WEPfWdpL9SJt0Q',  # Removed whitespace
-#         username='Diablo_The_Dark_Lord',
-#         password='umaU5WW_.39bRU5',
-#         user_agent='realtime-analysis-and-prediction-dashboard-for-social-media-data'
-#     )
-
-#     # Test with read-only access first
-#     reddit.read_only = True
+    keyword = input("Enter a keyword to search for: ")
+    subreddit_name = input("Enter the subreddit name (default='all'): ")
+    comments_with_keyword = search_keyword_in_comments_of_latest_posts(keyword, subreddit_name, 1000)
+    if comments_with_keyword:
+        print(f"Comments containing '{keyword}':")
+        for comment in comments_with_keyword:
+            print(f"{ datetime.datetime.utcfromtimestamp(comment.created_utc)} {comment.body}\n\n")
+    else:
+        print(f"No comments containing '{keyword}' found.")
+        
+    end = time.time()
+    print(f"Execution time: {end - start} seconds")
     
-#     subreddit = reddit.subreddit('typing')
-#     for post in subreddit.hot(limit=5):
-#         print(post.title)
+    
 
-# except ResponseException as e:
-#     print(f"Authentication Error: {e}")
-# except Exception as e:
-#     print(f"Error: {e}")
     
