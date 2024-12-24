@@ -1,5 +1,4 @@
 import praw
-from prawcore.exceptions import ResponseException
 import dotenv
 import time
 import datetime
