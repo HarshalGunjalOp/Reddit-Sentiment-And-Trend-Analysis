@@ -28,7 +28,7 @@ const db = new sqlite3.Database('./db.sqlite', (err) => {
 db.run(`
   CREATE TABLE IF NOT EXISTS comments (
     id TEXT PRIMARY KEY,
-    text TEXT,
+    comment TEXT,
     created_at TEXT
   )
 `, (err) => {
