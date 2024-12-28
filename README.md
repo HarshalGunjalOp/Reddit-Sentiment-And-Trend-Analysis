@@ -43,12 +43,6 @@ conda env create -f environment.yml
 conda activate <your_environment_name>
 ```
 
-Alternatively, you can install the dependencies manually using pip:
-
-```bash
-pip install -r requirements.txt
-```
-
 Additionally, download the necessary NLP models:
 ```bash
 python -m spacy download en_core_web_sm
