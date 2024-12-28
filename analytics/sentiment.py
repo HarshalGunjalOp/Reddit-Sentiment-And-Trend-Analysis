@@ -5,7 +5,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 nltk.download('vader_lexicon')
 
 # Connect to the database
-conn = sqlite3.connect('../db.sqlite')
+conn = sqlite3.connect('sqlite.db')
 cursor = conn.cursor()
 
 # Retrieve comments
@@ -44,8 +44,8 @@ for i in sentiment_results:
 average=total/(len(sentiment_results))
 
 if average >= 0.05:
-    print('positive')
+    print('\n\nObserved sentiment is positive.')
 elif average <= -0.05:
-    print('negative')
+    print('\n\nObserved sentiment is negative.')
 else:
-    print('neutral')
+    print('\n\nObserved sentiment is neutral.')
