@@ -1,4 +1,4 @@
-name: realtime-dashboard
+name: reddit-sentiment-and-trend-analysis
 channels:
   - defaults
   - conda-forge
